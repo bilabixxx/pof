@@ -157,7 +157,7 @@ To add a new user you will need to use the following scheme:
 
  Result:
 
- ![](img/orders-id.png)
+ ![](img/orders-get-full.png)
 
  1. SPECIFY
 
