@@ -22,10 +22,10 @@ const updateProduct = (req, res) => {
     const { id } = req.params;
     const data = { ...req.body }
 
-    if (!mongoose.Types.ObjectId.isValid(id)) return res.status(404).json("Prodotto non trovato")
+    if (!mongoose.Types.ObjectId.isValid(id)) return res.status(404).json("Nessun prodotto da aggiornare trovato!")
 
     Product.findByIdAndUpdate(id, data, { new: true })
-        .then(product => res.status(200).json(product))
+        .then(() => res.status(200).json("Prodotto aggiornato con successo!"))
         .catch(err => res.status(404).json("Errore: " + err))
 }
 

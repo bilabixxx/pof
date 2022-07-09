@@ -1,74 +1,78 @@
 const mongoose = require('mongoose');
 const Order = require('../models/orders');
-const User = require('../models/users');
+const Product = require('../models/products');
+
+const lookupUser = {
+    $lookup:
+    {
+        from: "users",
+        localField: "id_user",
+        foreignField: "_id",
+        as: "user"
+    }
+};
+const lookupProduct = {
+    $lookup:
+    {
+        from: "products",
+        localField: "products.id_product",
+        foreignField: "_id",
+        as: "products"
+    }
+};
+const unset = {
+    $unset: ["id_user", "__v", "user.createdAt", "user.updatedAt", "user.__v", "products.createdAt", "products.updatedAt", "products.__v"]
+};
 
 const addOrder = async (req, res) => {
     const id_user = req.body.id_user;
     const products = req.body.products;
 
-
-    const checkData = async (userID, productsReq) => {
-        User.findById({ _id: userID }).then(() => {
-            const order = new Order({ id_user: userID, products: productsReq });
-            order.save()
-                .then((order) => res.status(201).json(order))
-                .catch(() => res.status(404).send("Prodotto o utente non trovato!"))
-        })
-            .catch(() => res.status(404).send("Prodotto o utente non trovato!"))
-    }
-
-    checkData(id_user, products)
-
+    const order = new Order({ id_user, products });
+    order.save()
+        .then((order) => res.status(201).json(order))
+        .catch((err) => res.status(404).send("Error: " + err))
 }
 
 
 const getAllOrders = (req, res) => {
     Order.aggregate([
-        {
-            $lookup:
-            {
-                from: "users",
-                localField: "id_user",
-                foreignField: "_id",
-                as: "users"
-            }      
-        },
-        {
-            $unset: [ "__v","users._id", "users.createdAt", "users.updatedAt", "users.__v" ]
-        }
-    ]).then(orders => { res.status(200).json(orders.reverse()) })
+        lookupUser,
+        lookupProduct,
+        unset
+    ])
+        .then(orders => { res.status(200).json(orders.reverse()) })
+        .catch(() => res.status(404).send("Nessun prodotto trovato!"))
 }
 
-const getOrderDate = (req, res) => {
-    const date = req.params.date;
-    const start = new Date(date);
-    const end = new Date(date + "T23:59:00.000Z")
-    Order.find({ createdAt: { $gte: start, $lt: end } })
-        .then(result => res.status(200).json(result))
-        .catch(err => res.status(404).json("Errore: " + err))
-
-}
-
-const getOrderName = (req, res) => {
-    const name = req.params.name;
-    const regex = new RegExp(["^", name, "$"].join("").replace('-', ' '), "i");
-
-    Order.find({ "products.name": regex })
-        .then(result => res.status(200).json(result))
-        .catch(err => res.status(404).json("Name Error: " + err))
-}
-
-const getFullFilter = (req, res) => {
+const getFilter = (req, res) => {
     const date = req.params.date;
     const name = req.params.name;
     const start = new Date(date);
     const end = new Date(date + "T23:59:00.000Z")
     const regex = new RegExp(["^", name, "$"].join("").replace('-', ' '), "i");
 
+        Product.find({ "name": regex })
+        .then(product => {
+            Order.aggregate([
+                {
+                    $match: {
+                        $and: [ 
+                            {createdAt: { $gte: start, $lt: end }},
+                            {"products.id_product" : product[0]._id}
+                        ]
+                         
+                        },
+                },
+                lookupUser,
+                lookupProduct,
+                unset
+            ])
+                .then((filterOrder) =>  res.status(200).json(filterOrder))
+                .catch(() => res.status(404).json("Errore: Nessun ordine trovato con il nome del seguente prodotto: " + name))
 
-    Order.find({ createdAt: { $gte: start, $lt: end }, "products.name": regex })
-        .then(result => res.status(200).json(result))
-        .catch(err => res.status(404).json("Errore: " + err))
+        })
+        .catch(err => res.status(404).json("Name Error: Nessun ordine trovato con la data " + date))
 
 }
 
@@ -80,7 +84,7 @@ const updateOrder = (req, res) => {
     if (!mongoose.Types.ObjectId.isValid(id)) return res.status(404).json("Ordine non trovato")
 
     Order.findByIdAndUpdate(id, data, { new: true })
-        .then(order => res.status(200).json(order))
+        .then(order => res.status(200).json("Ordine aggiornato con successo!"))
         .catch(err => res.status(404).json("Errore: " + err))
 }
 
@@ -103,4 +107,4 @@ const getOrder = (req, res) => {
 
 }
 
-module.exports = { addOrder, getAllOrders, updateOrder, deleteOrder, getOrder, getOrderDate, getOrderName, getFullFilter }
+module.exports = { addOrder, getAllOrders, updateOrder, deleteOrder, getOrder, getFilter }
