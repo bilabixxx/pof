@@ -30,8 +30,8 @@ const addOrder = async (req, res) => {
 
     const order = new Order({ id_user, products });
     order.save()
-        .then((order) => res.status(201).json(order))
-        .catch((err) => res.status(404).send("Error: " + err))
+        .then(() => res.status(201).json("Ordine aggiunto con successo!"))
+        .catch(() => res.status(404).send("L'id inserito non è valido!"))
 }
 
 
@@ -72,7 +72,7 @@ const getFilter = (req, res) => {
                 .catch(() => res.status(404).json("Errore: Nessun ordine trovato con il nome del seguente prodotto: " + name))
 
         })
-        .catch(err => res.status(404).json("Name Error: Nessun ordine trovato con la data " + date))
+        .catch(() => res.status(404).json("Name Error: Nessun ordine trovato con la data " + date))
 
 }
 

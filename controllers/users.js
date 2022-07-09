@@ -9,7 +9,7 @@ const addUser = (req, res) => {
     const user = new User({ name, surname, email });
 
     user.save()
-        .then(() => res.status(201).json('Utente aggiunto!'))
+        .then(() => res.status(201).json('Utente aggiunto con successo!'))
         .catch(error => res.status(404).json('Errore: ' + error))
 }
 
@@ -27,7 +27,7 @@ const updateUser = (req, res) => {
     if (!mongoose.Types.ObjectId.isValid(id)) return res.status(404).json("Utente non trovato")
 
     User.findByIdAndUpdate(id, data, { new: true })
-        .then(user => res.status(200).json(user))
+        .then(user => res.status(200).json("Utente aggiornato con successo!"))
         .catch(err => res.status(404).json("Errore: " + err))
 }
 
