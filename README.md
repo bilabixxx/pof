@@ -167,16 +167,16 @@ To add a new user you will need to use the following scheme:
 
 Result:
 
- ![](img/orders-get-id.png)
+ ![](img/order-get-filter.png)
 
 
 3. USING THE FILTER
 
-![](img/orders-filter.png)
+![](img/orders-get-filter.png)
 
 Result:
 
-![](img/orders-get-filter.png)
+![](img/order-get-filter.png)
 
 ### PATCH
 
