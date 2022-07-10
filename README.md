@@ -163,11 +163,11 @@ To add a new user you will need to use the following scheme:
 
  Or specify using (if you know) the product id.
 
- ![](img/orders-id.png)
+ ![](img/orders-url-id.png)
 
 Result:
 
- ![](img/order-get-filter.png)
+ ![](img/order-get-id.png)
 
 
 3. USING THE FILTER
@@ -176,7 +176,7 @@ Result:
 
 Result:
 
-![](img/order-get-filter.png)
+![](img//order-get-id.png)
 
 ### PATCH
 
