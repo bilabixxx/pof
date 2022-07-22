@@ -1,50 +1,73 @@
 const mongoose = require('mongoose');
 const Product = require('../models/products');
 
-const addProduct = (req, res) => {
+const statusAdded = 201;
+const statusError = 404;
+
+const createdMessage = "Prodotto creato con successo!";
+const updatedMessage = "Prodotto aggiornato con successo!";
+const deletedMessage = "Prodotto eliminato con successo!";
+const error = {
+    message: "Prodotto non trovato!"
+};
+
+const addProduct = async (req, res) => {
     const name = req.body.name;
 
-    const product = new Product({ name });
-
-    product.save()
-        .then(() => res.status(201).json('Prodotto aggiunto!'))
-        .catch(error => res.status(404).json('Errore: ' + error))
+    try {
+        const product = new Product({ name });
+        await product.save();
+        return res.success({ statusAdded, message: createdMessage });
+    } catch (e) {
+        return res.fail({ error })
+    }
 }
 
 
-const getAllProducts = (req, res) => {
-    Product.find({},{__v:0, updatedAt:0})
-        .then(product => res.status(200).json(product))
-        .catch(err => res.status(404).json(err))
+const getAllProducts = async (req, res) => {
+
+    try {
+        const products = await Product.find({}, { __v: 0, updatedAt: 0 })
+        return res.success({ data: products })
+    } catch (e) {
+        return res.fail({ status: statusError, error })
+    }
 }
 
-const updateProduct = (req, res) => {
-    const { id } = req.params;
-    const data = { ...req.body }
+const getProduct = async (req, res) => {
+    const id = req.params.id;
 
-    if (!mongoose.Types.ObjectId.isValid(id)) return res.status(404).json("Nessun prodotto da aggiornare trovato!")
-
-    Product.findByIdAndUpdate(id, data, { new: true })
-        .then(() => res.status(200).json("Prodotto aggiornato con successo!"))
-        .catch(err => res.status(404).json("Errore: " + err))
+    try {
+        const product = await Product.findById(id, { __v: 0, updatedAt: 0 });
+        return res.success({ data: product });
+    } catch (e) {
+        return res.fail({ status: statusError, error });
+    }
 }
 
-const deleteProduct = (req, res) => {
-    const { id } = req.params;
+const updateProduct = async (req, res) => {
+    const id = req.params.id;
+    const data = { ...req.body };
 
-    if (!mongoose.Types.ObjectId.isValid(id)) return res.status(404).json("Prodotto da elimare non trovato!")
-
-    Product.findByIdAndDelete(id)
-        .then(() => res.status(200).json("Prodotto eliminato con successo"))
-        .catch(err => res.status(404).json("Errore: " + err));
+    try {
+        if (!mongoose.Types.ObjectId.isValid(id)) return res.fail({ status: statusError, error });
+        await Product.findByIdAndUpdate(id, data, { new: true });
+        return res.success({ statusAdded, message: updatedMessage })
+    } catch (e) {
+        return res.fail({ status: statusError, error })
+    }
 }
 
-const getProduct = (req, res) => {
-    const { id } = req.params;
-    Product.findById(id, {__v:0, updatedAt:0})
-        .then(product => res.status(200).json(product))
-        .catch(err => res.status(404).json("Errore: " + err))
+const deleteProduct = async (req, res) => {
+    const id = req.params.id;
 
+    try {
+        if (!mongoose.Types.ObjectId.isValid(id)) return res.fail({ status: statusError, error });
+        await Product.findByIdAndDelete(id);
+        return res.success({ message: deletedMessage })
+    } catch (e) {
+        return res.fail({ status: statusError, error })
+    }
 }
 
 module.exports = { addProduct, getAllProducts, updateProduct, deleteProduct, getProduct }
