@@ -32,7 +32,7 @@ To perform manipulation of product data you will need to make requests at the fo
 
 To add a new product you will need to use the following schema:
 
-![](img/prodotto-post-schema.png)
+![](img/Prodotto-post-schema.png)
 
 ### GET
 
