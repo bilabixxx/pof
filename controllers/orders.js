@@ -43,7 +43,11 @@ const addOrder = async (req, res) => {
         await newOrder.save()
         return res.success({ statusAdded, message: createdMessage });
     } catch (e) {
-        return res.fail({ error })
+        return res.fail({
+            error: {
+                message: "Non è stato rispettato correttamente lo schema!"
+            }
+        })
     }
 }
 

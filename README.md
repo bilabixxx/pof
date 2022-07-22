@@ -71,7 +71,7 @@ To be able to carry out the deletion of a product it will be enough to know only
 
 Display if successful:
 
-![](img/Prodotto-delete-succes.png)
+![](img/Prodotto-delete-success.png)
 
 Display in case of error:
 
@@ -228,6 +228,10 @@ Fast, unopinionated, minimalist web framework for node.
 ### MONGOOSE
 
 Mongoose is a MongoDB object modeling tool designed to work in an asynchronous environment. Mongoose supports both promises and callbacks.
+
+ ### JSEND-EXPRESS
+
+ JSend-express is a complete implement to standard JSend in expressJs and it's extension. It's Simple API JSON Response Format, a JSend-compliant JSON Response Format for HTTP RESTful API (JSend standard & JSend-extend SAJ). JSend-express are no dependencies.
 
 <p align="right">(<a href="#top">back to top</a>)</p>
 

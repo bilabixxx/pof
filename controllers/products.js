@@ -19,7 +19,11 @@ const addProduct = async (req, res) => {
         await product.save();
         return res.success({ statusAdded, message: createdMessage });
     } catch (e) {
-        return res.fail({ error })
+        return res.fail({
+            error: {
+                message: "Non è stato rispettato correttamente lo schema!"
+            }
+        })
     }
 }
 
