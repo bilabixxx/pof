@@ -48,25 +48,28 @@ const addOrder = async (req, res) => {
 }
 
 const getOrder = async (req, res) => {
-    const { id } = req.params;
-    const objId = mongoose.Types.ObjectId(id)
+    const id = req.params.id;
 
 
     try {
-        const order = await Order.aggregate([
-            {
-                $match: { _id: objId },
-            },
-            lookupUser,
-            lookupProduct,
-            unset
-        ])
-
-        return res.success({ data: order })
-    } catch (error) {
+        await Order.findById(id, { __v: 0, updatedAt: 0 });
+        try {
+            const objId = mongoose.Types.ObjectId(id);
+            const order = await Order.aggregate([
+                {
+                    $match: { _id: objId },
+                },
+                lookupUser,
+                lookupProduct,
+                unset
+            ])
+            return res.success({ data: order })
+        } catch (e) {
+            return res.fail({ status: statusError, error });
+        }
+    } catch (e) {
         return res.fail({ status: statusError, error });
     }
-
 }
 
 const updateOrder = async (req, res) => {
@@ -137,7 +140,7 @@ const getOrders = async (req, res) => {
                 if (filterOrder.length == 0) {
                     return res.fail({
                         status: statusError, error: {
-                            message: "Nessun ordine trovato con la data " + date
+                            message: "Nessun ordine trovato con il nome prodotto " + name + " o in data " + date
                         }
                     })
                 } else {
@@ -146,14 +149,14 @@ const getOrders = async (req, res) => {
             } catch (e) {
                 return res.fail({
                     status: statusError, error: {
-                        message: "Nessun ordine trovato con il nome " + name
+                        message: "Nessun ordine trovato con il nome prodotto " + name + " o in data " + date
                     }
                 })
             }
         } catch (e) {
             return res.fail({
                 status: statusError, error: {
-                    message: "Nessun ordine trovato con il nome prodotto '" + name + "'"
+                    message: "Nessun ordine trovato con il nome prodotto " + name + " o in data " + date
                 }
             })
         }

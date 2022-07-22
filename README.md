@@ -71,7 +71,7 @@ To be able to carry out the deletion of a product it will be enough to know only
 
 Display if successful:
 
-![](img/prodotto-delete-succes.png)
+![](img/Prodotto-delete-succes.png)
 
 Display in case of error:
 
@@ -169,6 +169,9 @@ Result:
 
  ![](img/order-get-id.png)
 
+ Display in case of error:
+
+![](img/order-get-id-error.png)
 
 3. USING THE FILTER
 
@@ -176,7 +179,11 @@ Result:
 
 Result:
 
-![](img//order-get-id.png)
+![](img/order-get-filter.png)
+
+Display in case of error:
+
+![](img/order-get-filter-error.png)
 
 ### PATCH
 
