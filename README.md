@@ -59,7 +59,7 @@ The pattern will be the same as that of a POST call.
 
 If successful, the following message will be displayed:
 
-![](img/prodotto-patch-succes-full.png)
+![](img/prodotto-patch-success.png)
 
 In case of an error this message will be displayed:
 
